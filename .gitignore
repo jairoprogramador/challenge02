@@ -15,6 +15,8 @@ frontend/bower_components/
 
 # IDEs and editors
 frontend/.idea/
+oneseventech/.idea/
+oneseventech/target/
 
 # misc
 frontend/.sass-cache/

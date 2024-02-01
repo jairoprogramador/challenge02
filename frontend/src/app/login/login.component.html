@@ -1,6 +1,7 @@
 
     <div class="form_wrapper">
       <div class="sms" *ngIf="mensaje.length > 0" >Usuario Guardado correctamente</div>
+      <div class="sms-error" *ngIf="mensajeError.length > 0" >{{mensajeError}}</div>
       <div class="form_container">
         <div class="title_container">
           <h2>Crear Cuenta</h2>

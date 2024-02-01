@@ -21,6 +21,7 @@ interface User {
 export class LoginComponent implements OnInit {
 
   mensaje: string = "";
+  mensajeError: string = "";
 
   checkoutForm = new FormGroup({
     email: new FormControl(''),
@@ -67,12 +68,16 @@ export class LoginComponent implements OnInit {
         this.mensaje = "Usuario creado con exito";
         this.checkoutForm.reset();
       },
-      error => console.log(error)
+      error => {
+        this.mensajeError = "Error al guardar";
+        console.log(error)
+      }
     );
   }
 
   resetSms(): void {
     this.mensaje = "";
+    this.mensajeError = "";
   }
 
 }

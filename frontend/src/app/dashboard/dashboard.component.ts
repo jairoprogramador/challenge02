@@ -40,6 +40,7 @@ const decoded = jwtDecode(localStorage.getItem('token') || "");
 export class DashboardComponent implements OnInit {
 
   mensaje403: string = "";
+  mensajeError: string = "";
 
   payment = {} as Payment;
   paymentView = {} as PaymentView;
@@ -50,7 +51,29 @@ export class DashboardComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
-    this.getPayments();
+    this.checkParam();
+    setInterval(() => {
+      this.resetSms();
+    }, 5000);
+  }
+
+  private checkParam(){
+    const url = new URL(window.location.href);
+    const params = new URLSearchParams(url.search);
+    if(params.has("uId") && params.has("sId")){
+      const uId: string = params.get('uId') || "";
+      const sId: string = params.get('sId') || "";
+      
+      if(uId != "-1" && sId != "-1"){
+        this.pagar(parseInt(uId), parseInt(sId));
+      }else{
+        this.mensajeError = "Error en el pago";
+        this.paymentView = {} as PaymentView;
+      }
+    }
+    else{
+      this.getPayments();
+    }
   }
 
   async getPayments(): Promise<void> {
@@ -59,17 +82,28 @@ export class DashboardComponent implements OnInit {
     response.subscribe(
       result => {
         const payments = result as Payment[];
-        if(payments.length == 0) {
-          localStorage.removeItem('token');
+        if(payments.length != 0){
+          this.payment = payments[0];
+          this.paymentView = {
+            name: this.payment.user.name +" "+ this.payment.user.lastName,
+            email: this.payment.user.email,
+            type: this.payment.subscription.type,
+            expiration: this.payment.expirationDate
+          }
+          this.expirationDate = new Date(this.payment.expirationDate);
+        }else{
+          this.paymentView = {} as PaymentView;
         }
-        this.payment = payments[0];
-        this.paymentView = {
-          name: this.payment.user.name +" "+ this.payment.user.lastName,
-          email: this.payment.user.email,
-          type: this.payment.subscription.type,
-          expiration: this.payment.expirationDate
-        }
-        this.expirationDate = new Date(this.payment.expirationDate);
+      },
+      error => console.log(error)
+    );
+  }
+
+  async pagar(userId: number, subsId: number): Promise<void> {
+    let response = this.paymentService.create({userId: userId,subscriptionId: subsId});
+    response.subscribe(
+      result => {
+        window.open("http://localhost:4200/dashboard", "_self");
       },
       error => console.log(error)
     );
@@ -85,5 +119,10 @@ export class DashboardComponent implements OnInit {
           localStorage.removeItem('token');
           this.router.navigate(['./']);
     }
+  }
+
+  resetSms(): void {
+    this.mensajeError = "";
+    this.mensaje403 = "";
   }
 }

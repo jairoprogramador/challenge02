@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { SubscriptionService } from '../../services/subscription.service';
-import { PaymentService } from '../../services/payment.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 
@@ -24,15 +23,14 @@ export class SubscriptionComponent implements OnInit {
 
   constructor(
     private subscriptionService: SubscriptionService,
-    private paymentService: PaymentService,
     private router: Router) { }
 
-    ngOnInit() {
-      this.getSubscriptions();
-      setInterval(() => {
-        this.resetSms(); 
-      }, 5000);
-    }
+  ngOnInit() {
+    this.getSubscriptions();
+    setInterval(() => {
+      this.resetSms();
+    }, 5000);
+  }
 
   async getSubscriptions(): Promise<void> {
     let response = this.subscriptionService.get();
@@ -45,10 +43,11 @@ export class SubscriptionComponent implements OnInit {
   }
 
   async createPayment(sub: any): Promise<void> {
-    let response = this.paymentService.create({userId:2,subscriptionId:sub.id });
+    let response = this.subscriptionService.payment(sub.id);
     response.subscribe(
-      result => {
-        this.mensaje = "Pago creado con exito";
+      (result: any) => {
+        console.log(result);
+        window.open(result.url, "_self");
       },
       error => this.handlerError(error)
     );
@@ -56,12 +55,14 @@ export class SubscriptionComponent implements OnInit {
 
   handlerError(error: any) {
     let response = error as HttpErrorResponse;
-    if(response.status == 403) {
+    if (response.status == 403) {
       this.mensaje403 = "No tienes permiso al recurso";
     }
-    if(response.status == 401 || response.status == 0) {
-          localStorage.removeItem('token');
-          this.router.navigate(['./']);
+    if (response.status == 401 || response.status == 0) {
+      localStorage.removeItem('token');
+      this.router.navigate(['./']);
+    }else{
+      this.mensaje = "Error al realizar la operación";
     }
   }
 

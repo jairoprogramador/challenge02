@@ -27,10 +27,6 @@ public class PaymentService {
     private final SubscriptionRepository subscriptionRepository;
 
     public PaymentEntity save(PaymentInput payment) {
-        Optional<PaymentEntity> userExist =this.paymentRepository.findByUserIdAndSubscriptionId(payment.getUserId(), payment.getSubscriptionId());
-        if(userExist.isPresent()){
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Payment already exist");
-        }
 
         Optional<SubscriptionEntity> subscriptionExist = this.subscriptionRepository.findById(payment.getSubscriptionId());
         if(subscriptionExist.isEmpty()){

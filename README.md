@@ -96,3 +96,12 @@ curl --location 'localhost:8080/payment' \
     "subscriptionId": 2
 }'
 </code></pre>
+
+## 3. Probar APP
+
+para probar debe seguir los siguientes pasos, luego de tener las apps y la base de datos funcionando.
+
+- Crear Usuario en el formulario
+- Iniciar sesion con el usuario creado
+- Comprar uno de las dos subcripciones. Para esto hay que especificar esta tarjeta 4242 4242 4242 4242, el resto de datos los puede inventar.
+- Cuando el proceso de compra termine automaticamente regresara a la app y mostrara la compra realizada.

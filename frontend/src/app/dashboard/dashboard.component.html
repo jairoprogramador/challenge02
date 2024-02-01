@@ -1,0 +1,13 @@
+<div class="card" *ngIf="paymentView.email">
+  <img src="../../assets/luffy.png" alt="John" style="width:100%">
+  <h1>{{paymentView.name}}</h1>
+  <p class="title">{{paymentView.email}} </p>
+  <p>Subscripcion {{paymentView.type}}</p>
+  <p class="title">{{expirationDate | date: 'dd/MM/yyyy'}} </p>
+</div>
+<div *ngIf="!paymentView.email">
+  <app-subscription></app-subscription>
+</div>
+<div class="error403">
+  {{mensaje403}}
+</div>
